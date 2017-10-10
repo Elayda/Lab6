@@ -33,7 +33,7 @@ public class FrontCompression {
      */
     public static String compress(final String corpus) {
         /*
-         * Defend against bad inputs.
+         * Defend against bad inputs. with this
          */
         if (corpus == null) {
             return null;
@@ -42,12 +42,33 @@ public class FrontCompression {
         }
 
         /*
-         * Complete this function.
+         * Complete this function. to
          */
+        String prefix = "";
+        String[] wordOrder = corpus.split("\n");
+        String compressedWords;
+        String wordHolder = wordOrder[0];
+        compressedWords = 0 + " " + wordOrder[0] + "\n";
+        for (int counter = 1; counter < wordOrder.length; counter += 1) {
+            int prefLeng = longestPrefix(wordOrder[counter - 1], wordOrder[counter]);
+            // Clearing prefix and saving to the output
+            wordHolder = wordOrder[counter];
+            if (prefLeng > 0) {
+                prefix = wordOrder[counter].substring(0, prefLeng - 1);
 
-        return "";
+                wordHolder = wordOrder[counter].substring(prefLeng - 1);
+            }
+            System.out.println(counter + " " + prefix);
+            compressedWords += prefLeng + " " + wordHolder + "\n";
+
+        }
+        System.out.println(compressedWords);
+        return compressedWords;
     }
-
+    /**
+     * This is how much we need to adjust in order to skip the clarifier number.
+     */
+    public static final int OFF_READ = 2;
     /**
      * Decompress a newline-separated list of words using simple front compression.
      *
@@ -67,8 +88,44 @@ public class FrontCompression {
         /*
          * Complete this function.
          */
+        String prefix = "";
+        String[] wordOrder = corpus.split("\n");
+        String decompWords = "";
+        String crafterWord;
+        String wordHolder = "";
+        int count = 0;
+        int lastLead;
 
-        return "";
+
+        String[] splitEntry = wordOrder[count].split(" ");
+        decompWords += splitEntry[1] + "\n";
+        lastLead = Integer.valueOf(splitEntry[0]);
+        prefix = splitEntry[1];
+        for (int counter = 1; counter < wordOrder.length; counter += 1) {
+            splitEntry = wordOrder[counter].split(" ");
+
+            int prefLeng = Integer.valueOf(splitEntry[0]);
+            System.out.println(counter + " prefLeng " + prefLeng);
+            // Clearing prefix and saving to the output
+            if (prefLeng > 0) {
+                System.out.println(counter + " prefix " + prefix);
+                crafterWord = prefix + splitEntry[1].substring(prefLeng - 1);
+                System.out.println(counter + " Craft " + crafterWord);
+                wordOrder[counter] = crafterWord;
+                prefix = wordOrder[counter].substring(0, prefLeng);
+                System.out.println(counter + " prefix " + prefix);
+
+            } else {
+                wordOrder[counter] = wordOrder[counter].substring(prefLeng - 1 + OFF_READ);
+
+            }
+            System.out.println(counter + " " + prefix);
+            decompWords += wordOrder[counter] + "\n";
+            lastLead = splitEntry[0].length();
+        }
+
+        return decompWords;
+
     }
 
     /**
@@ -79,10 +136,16 @@ public class FrontCompression {
      * @return the length of the common prefix between the two strings
      */
     private static int longestPrefix(final String firstString, final String secondString) {
-        /*
-         * Complete this function.
-         */
-        return 0;
+        int prefixSize = -1;
+        String firstWorker = firstString;
+        String secondWorker = secondString;
+        for (prefixSize = 0; prefixSize < firstWorker.length(); prefixSize += 1) {
+            if (firstWorker.charAt(prefixSize) != secondWorker.charAt(prefixSize)) {
+                break;
+            }
+
+        }
+        return prefixSize;
     }
 
     /**
